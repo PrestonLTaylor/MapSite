@@ -39,3 +39,5 @@ app.UseAPIKeyAuthentication();
 app.MapEntityTrackingEndpoints();
 
 app.Run();
+
+public partial class Program { }
