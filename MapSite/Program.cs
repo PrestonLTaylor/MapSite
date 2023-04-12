@@ -1,4 +1,5 @@
 using Serilog;
+using MapSite.Endpoints;
 using MapSite.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,6 +8,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
 builder.Services.AddAPIKeyAuthenticationServices();
+builder.Services.AddEntityTrackingServices();
 
 builder.Host.UseSerilog((context, config) =>
 {
@@ -33,5 +35,7 @@ app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 
 app.UseAPIKeyAuthentication();
+
+app.MapEntityTrackingEndpoints();
 
 app.Run();
