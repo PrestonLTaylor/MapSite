@@ -65,7 +65,7 @@ internal sealed class MapEntityTrackerTest
         });
 
         // Act
-        entityTracker.DeleteMapEntity(new EntityDeleteRequest(entityIdToDelete));
+        entityTracker.DeleteMapEntity(entityIdToDelete);
         var trackedEntities = entityTracker.GetTrackedEntities();
 
         // Assert
@@ -85,7 +85,7 @@ internal sealed class MapEntityTrackerTest
         });
 
         // Act
-        entityTracker.DeleteMapEntity(new EntityDeleteRequest(entityIdToDelete));
+        entityTracker.DeleteMapEntity(entityIdToDelete);
         var trackedEntities = entityTracker.GetTrackedEntities();
 
         // Assert

@@ -3,5 +3,10 @@
 public struct APIRoutes
 {
     public const string Root = "/api";
-    public const string EntityTracker = "/api/entitytracker";
+    public struct EntityTracker
+    {
+        public const string Root = APIRoutes.Root + "/entitytracker";
+        public const string Update = Root;
+        public const string Delete = Root + "/{entityId}";
+    }
 }

@@ -3,7 +3,6 @@
 public sealed record EntityPosition(int x, int y);
 public sealed record MapEntity(EntityPosition Position, string EntityType);
 public sealed record EntityUpdateRequest(int EntityId, MapEntity UpdatedMapEntity);
-public sealed record EntityDeleteRequest(int EntityId);
 
 public sealed class MapEntityTracker
 {
@@ -21,15 +20,15 @@ public sealed class MapEntityTracker
         _entityIdToMapEntity[updateRequest.EntityId] = updateRequest.UpdatedMapEntity;
     }
 
-    public void DeleteMapEntity(EntityDeleteRequest deleteRequest)
+    public void DeleteMapEntity(int entityId)
     {
-        if (_entityIdToMapEntity.Remove(deleteRequest.EntityId))
+        if (_entityIdToMapEntity.Remove(entityId))
         {
-            _logger.LogInformation("Deleted entity with id: {Id}", deleteRequest.EntityId);
+            _logger.LogInformation("Deleted entity with id: {Id}", entityId);
         }
         else
         {
-            _logger.LogWarning("Tried to delete an entity that didn't exist with id: {Id}", deleteRequest.EntityId);
+            _logger.LogWarning("Tried to delete an entity that didn't exist with id: {Id}", entityId);
         }
     }
 
