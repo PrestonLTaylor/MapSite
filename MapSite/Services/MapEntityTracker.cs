@@ -16,7 +16,9 @@ public sealed class MapEntityTracker
 
     public void UpdateTrackedMapEntity(EntityUpdateRequest updateRequest)
     {
-        throw new NotImplementedException();
+        _logger.LogInformation("Updated entity with id {Id} and MapEntity {MapEntity}", updateRequest.EntityId, updateRequest.UpdatedMapEntity);
+
+        _entityIdToMapEntity[updateRequest.EntityId] = updateRequest.UpdatedMapEntity;
     }
 
     public void DeleteMapEntity(EntityDeleteRequest deleteRequest)

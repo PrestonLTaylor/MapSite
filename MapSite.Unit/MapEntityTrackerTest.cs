@@ -6,6 +6,55 @@ namespace MapSite.Unit;
 internal sealed class MapEntityTrackerTest
 {
     [Test]
+    public void UpdateMapEntity_WhenSuppliedNewEntityId_CreatesNewTrackedEntity()
+    {
+        // Arrange
+        const int uniqueEntityId = 0;
+        var trackedMapEntity = new MapEntity(new EntityPosition(0, 0), "TestEntity");
+        var entityTracker = CreateMapEntityTrackerWithDefaultMapEntities(new Dictionary<int, MapEntity>
+        {
+            { uniqueEntityId, new MapEntity(new EntityPosition(0, 0), "TestEntity") }
+        });
+
+        // Act
+        entityTracker.UpdateTrackedMapEntity(new EntityUpdateRequest(uniqueEntityId, trackedMapEntity));
+        var trackedEntities = entityTracker.GetTrackedEntities();
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(trackedEntities.Count(), Is.EqualTo(1));
+            Assert.That(trackedEntities.First().Key, Is.EqualTo(uniqueEntityId));
+            Assert.That(trackedEntities.First().Value, Is.EqualTo(trackedMapEntity));
+        });
+    }
+
+    [Test]
+    public void UpdateMapEntity_WhenSuppliedExistingEntityId_UpdatesTrackedEntity()
+    {
+        // Arrange
+        const int uniqueEntityId = 0;
+        var originalMapEntity = new MapEntity(new EntityPosition(0, 0), "TestEntity");
+        var updatedMapEntity = new MapEntity(new EntityPosition(1, 1), "TestEntity");
+        var entityTracker = CreateMapEntityTrackerWithDefaultMapEntities(new Dictionary<int, MapEntity>
+        {
+            { uniqueEntityId, originalMapEntity }
+        });
+
+        // Act
+        entityTracker.UpdateTrackedMapEntity(new EntityUpdateRequest(uniqueEntityId, updatedMapEntity));
+        var trackedEntities = entityTracker.GetTrackedEntities();
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(trackedEntities.Count(), Is.EqualTo(1));
+            Assert.That(trackedEntities.First().Key, Is.EqualTo(uniqueEntityId));
+            Assert.That(trackedEntities.First().Value, Is.EqualTo(updatedMapEntity));
+        });
+    }
+
+    [Test]
     public void DeleteMapEntity_WhenSuppliedTrackedEntityId_DeletesThatTrackedEntity()
     {
         // Arrange
