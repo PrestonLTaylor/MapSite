@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.TestHost;
 using MapSite.Middleware;
 using MapSite.Services;
 using System.Net;
+using MapSite.Endpoints;
 
 namespace MapSite.Unit;
 
@@ -14,12 +15,11 @@ internal sealed class APIKeyAuthenticationMiddlewareTest
     public async Task Middleware_ReturnsUnauthorised_WhenRequestHasNoAPIKeyHeader()
     {
         // Arrange
-        const string APIPath = "/api";
         const string ValidAPIKey = "VALID-KEY";
         using var host = await StartHostWithMiddlewareWithAPIKeyAsync(ValidAPIKey);
 
         // Act
-        var response = await host.GetTestClient().GetAsync(APIPath);
+        var response = await host.GetTestClient().GetAsync(APIRoutes.Root);
 
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
@@ -29,14 +29,13 @@ internal sealed class APIKeyAuthenticationMiddlewareTest
     public async Task Middleware_ReturnsUnauthorised_WhenRequestHasInvalidAPIKey()
     {
         // Arrange
-        const string APIPath = "/api";
         const string ValidAPIKey = "VALID-KEY";
         const string InvalidAPIKey = "INVALID-KEY";
         using var host = await StartHostWithMiddlewareWithAPIKeyAsync(ValidAPIKey);
         var testClient = SetupTestClientToHaveAPIKey(host, InvalidAPIKey);
 
         // Act
-        var response = await testClient.GetAsync(APIPath);
+        var response = await testClient.GetAsync(APIRoutes.Root);
 
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
@@ -46,12 +45,12 @@ internal sealed class APIKeyAuthenticationMiddlewareTest
     public async Task Middleware_ReturnsNotFound_WhenRequestHasValidAPIKey()
     {
         // Arrange
-        const string APIPath = "/api";
         const string ValidAPIKey = "VALID-KEY";
         using var host = await StartHostWithMiddlewareWithAPIKeyAsync(ValidAPIKey);
         var testClient = SetupTestClientToHaveAPIKey(host, ValidAPIKey);
+
         // Act
-        var response = await testClient.GetAsync(APIPath);
+        var response = await testClient.GetAsync(APIRoutes.Root);
 
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));

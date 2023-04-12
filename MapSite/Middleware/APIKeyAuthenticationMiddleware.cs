@@ -1,4 +1,5 @@
-﻿using MapSite.Services;
+﻿using MapSite.Endpoints;
+using MapSite.Services;
 using System.Net;
 
 namespace MapSite.Middleware;
@@ -13,7 +14,7 @@ public sealed class APIKeyAuthenticationMiddleware
 
     public async Task InvokeAsync(HttpContext context)
     {
-        if (!context.Request.Path.StartsWithSegments("/api"))
+        if (!context.Request.Path.StartsWithSegments(APIRoutes.Root))
         {
             await _next.Invoke(context);
             return;
