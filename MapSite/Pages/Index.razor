@@ -1,7 +1,29 @@
 ﻿@page "/"
+@inject IJSRuntime JS
+@inject MapEntityTracker entityTracker
 
 <PageTitle>Index</PageTitle>
 
-<div class="container">
-	<h1>MapSite</h1>
-</div>
+<div id="@mapContainerId"></div>
+
+@code {
+	const string mapContainerId = "map-container";
+	protected IJSObjectReference? module;
+
+	record BoundsConfig(int TopX, int TopY, int BottomX, int BottomY);
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		await JS.InvokeAsync<IJSObjectReference>("import", "https://unpkg.com/leaflet@1.9.3/dist/leaflet.js");
+
+		module = await JS.InvokeAsync<IJSObjectReference>("import", "./Pages/Index.razor.js");
+
+		var entityTypeToImage = new Dictionary<string, string>();
+		await module.InvokeVoidAsync("InitializeMapIcons", entityTypeToImage);
+
+		var boundsConfig = new BoundsConfig(-13000, -14500, 15500, 13000);
+		var imageOverlay = "https://upload.wikimedia.org/wikipedia/commons/3/34/England_in_the_uk_outline_map.png";
+		await module.InvokeVoidAsync("InitializeMapContainer", mapContainerId, boundsConfig, imageOverlay, entityTypeToImage);
+
+		await module.InvokeVoidAsync("AddInitialMapEntities", entityTracker.GetTrackedEntities());
+	}
+}
