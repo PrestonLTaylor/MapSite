@@ -90,7 +90,7 @@ internal sealed class EntityTrackerEndpointTest : IntegrationTest
     }
 
     [Test]
-    public async Task Delete_WhenSuppliedInvalidEntity_DoesNothing()
+    public async Task Delete_WhenSuppliedInvalidEntity_ReturnsNotFound()
     {
         // Arrange
         const string updatePath = APIRoutes.EntityTracker.Root + APIRoutes.EntityTracker.Update;
@@ -108,7 +108,7 @@ internal sealed class EntityTrackerEndpointTest : IntegrationTest
         // Assert
         Assert.Multiple(() =>
         {
-            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
             Assert.That(trackedEntities.Count(), Is.EqualTo(1));
         });
     }

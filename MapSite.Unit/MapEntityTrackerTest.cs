@@ -55,7 +55,7 @@ internal sealed class MapEntityTrackerTest
     }
 
     [Test]
-    public void DeleteMapEntity_WhenSuppliedTrackedEntityId_DeletesThatTrackedEntity()
+    public void TryDeleteMapEntity_WhenSuppliedTrackedEntityId_DeletesThatTrackedEntity()
     {
         // Arrange
         const int entityIdToDelete = 0;
@@ -65,11 +65,15 @@ internal sealed class MapEntityTrackerTest
         });
 
         // Act
-        entityTracker.DeleteMapEntity(entityIdToDelete);
+        var deleted = entityTracker.TryDeleteMapEntity(entityIdToDelete);
         var trackedEntities = entityTracker.GetTrackedEntities();
 
         // Assert
-        Assert.That(trackedEntities.Count(), Is.Zero);
+        Assert.Multiple(() =>
+        {
+            Assert.That(deleted, Is.True);
+            Assert.That(trackedEntities.Count(), Is.Zero);
+        });
     }
 
     [Test]
@@ -85,12 +89,13 @@ internal sealed class MapEntityTrackerTest
         });
 
         // Act
-        entityTracker.DeleteMapEntity(entityIdToDelete);
+        var deleted = entityTracker.TryDeleteMapEntity(entityIdToDelete);
         var trackedEntities = entityTracker.GetTrackedEntities();
 
         // Assert
         Assert.Multiple(() =>
         {
+            Assert.That(deleted, Is.False);
             Assert.That(trackedEntities.Count(), Is.EqualTo(1));
             Assert.That(trackedEntities.First().Key, Is.EqualTo(entityIdToKeep));
             Assert.That(trackedEntities.First().Value, Is.EqualTo(trackedMapEntity));

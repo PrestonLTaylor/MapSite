@@ -22,8 +22,8 @@ public static class EntityTrackingEndpointsExtensions
         });
 
         entityTracking.MapDelete(APIRoutes.EntityTracker.Delete, (MapEntityTracker tracker, int entityId) => {
-            tracker.DeleteMapEntity(entityId);
-            return Results.NoContent();
+            var deleted = tracker.TryDeleteMapEntity(entityId);
+            return deleted ? Results.NoContent() : Results.NotFound();
         });
 
         return app;

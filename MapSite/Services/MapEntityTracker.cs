@@ -20,16 +20,16 @@ public sealed class MapEntityTracker
         _entityIdToMapEntity[updateRequest.EntityId] = updateRequest.UpdatedMapEntity;
     }
 
-    public void DeleteMapEntity(int entityId)
+    public bool TryDeleteMapEntity(int entityId)
     {
         if (_entityIdToMapEntity.Remove(entityId))
         {
             _logger.LogInformation("Deleted entity with id: {Id}", entityId);
+            return true;
         }
-        else
-        {
-            _logger.LogWarning("Tried to delete an entity that didn't exist with id: {Id}", entityId);
-        }
+
+        _logger.LogWarning("Tried to delete an entity that didn't exist with id: {Id}", entityId);
+        return false;
     }
 
     public IEnumerable<KeyValuePair<int, MapEntity>> GetTrackedEntities()
