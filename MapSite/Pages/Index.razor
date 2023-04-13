@@ -19,12 +19,13 @@
 
 		module = await JS.InvokeAsync<IJSObjectReference>("import", "./Pages/Index.razor.js");
 
-		var entityTypeToImage = config.GetValue<Dictionary<string, string>>("MapIcons");
+		var entityTypeToImage = config.GetSection("MapIcons").Get<Dictionary<string, string>>();
 		await module.InvokeVoidAsync("InitializeMapIcons", entityTypeToImage);
 
 		var mapConfig = config.GetSection("MapConfig").Get<MapConfig>() ?? throw new InvalidOperationException("Configuration 'MapConfig' was null.");
 		await module.InvokeVoidAsync("InitializeMapContainer", mapContainerId, mapConfig);
 
-		await module.InvokeVoidAsync("AddInitialMapEntities", entityTracker.GetTrackedEntities());
+		var apiKey = config.GetValue<string>(APIKey.SectionName) ?? throw new InvalidOperationException("Configuration 'API_KEY' was null.");
+		await module.InvokeVoidAsync("InitializePolling", apiKey);
 	}
 }

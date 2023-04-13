@@ -1,6 +1,7 @@
 ﻿var mapIcons = {};
 var entityMarkers = {};
 var map;
+var apiKey;
 
 export function InitializeMapIcons(entityTypeToImage) {
     if (!entityTypeToImage) {
@@ -35,9 +36,38 @@ function AddMapEntity(mapEntityId, mapEntity) {
     }
 }
 
-export function AddInitialMapEntities(mapEntities) {
-    for (let mapEntityId in mapEntities) {
-        let mapEntity = mapEntities[mapEntityId];
-        AddMapEntity(mapEntityId, mapEntity);
+function UpdateMapMarkersWithEntityJson(json) {
+    for (var entityId in json) {
+        var entity = json[entityId];
+        var marker = entityMarkers[entityId];
+        if (marker) {
+            marker.setLatLng([entity.position.x, entity.position.y]);
+        }
+        else {
+            AddMapEntity(entityId, entity);
+        }
     }
+
+    // Check if an entity was removed
+    for (var entityId in entityMarkers) {
+        var entity = json[entityId]
+        if (!entity) {
+            var marker = entityMarkers[entityId];
+            map.removeLayer(marker);
+        }
+    }
+}
+
+function MapEntityPolling() {
+    fetch("/api/entitytracker",
+        {
+            headers: { "API_KEY": apiKey }
+        })
+        .then((response) => response.json())
+        .then((json) => UpdateMapMarkersWithEntityJson(json));
+}
+
+export function InitializePolling(providedApiKey) {
+    apiKey = providedApiKey;
+    setInterval(MapEntityPolling, 1000);
 }
