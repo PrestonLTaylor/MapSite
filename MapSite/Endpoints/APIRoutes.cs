@@ -10,6 +10,7 @@ public struct APIRoutes
     public struct EntityTracker
     {
         public const string Root = APIRoutes.Root + "/entitytracker";
+        public const string Get = "/";
         public const string Update = "/";
         public const string Delete = "/{entityId}";
     }

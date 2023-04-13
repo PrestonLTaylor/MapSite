@@ -16,7 +16,12 @@ public static class EntityTrackingEndpointsExtensions
         var versioning = app.NewVersionedApi("Entity Tracking");
         var entityTracking = versioning.MapGroup(APIRoutes.EntityTracker.Root).HasApiVersion(APIRoutes.LatestMajorVersion, APIRoutes.LatestMinorVersion);
 
-        entityTracking.MapPost(APIRoutes.EntityTracker.Update, (MapEntityTracker tracker, [FromBody]EntityUpdateRequest updateRequest) => {
+		app.MapGet("/api/entitytracker", (MapEntityTracker tracker) => {
+            var trackedEntities = tracker.GetTrackedEntities();
+            return Results.Ok(trackedEntities);
+		});
+
+		entityTracking.MapPost(APIRoutes.EntityTracker.Update, (MapEntityTracker tracker, [FromBody]EntityUpdateRequest updateRequest) => {
             tracker.UpdateTrackedMapEntity(updateRequest);
             return Results.Accepted();
         });
