@@ -3,6 +3,10 @@ var entityMarkers = {};
 var map;
 
 export function InitializeMapIcons(entityTypeToImage) {
+    if (!entityTypeToImage) {
+        return;
+    }
+
     for (let entityType in entityTypeToImage) {
         mapIcons[entityType] = L.icon({
             iconUrl: entityTypeToImage[entityType],
@@ -11,14 +15,14 @@ export function InitializeMapIcons(entityTypeToImage) {
     }
 }
 
-export function InitializeMapContainer(mapContainerId, boundsConfig, imageOverlay) {
+export function InitializeMapContainer(mapContainerId, mapConfig) {
     map = L.map(mapContainerId, {
         crs: L.CRS.Simple,
         minZoom: -5
     });
 
-    const bounds = [[boundsConfig.topX, boundsConfig.topY], [boundsConfig.bottomX, boundsConfig.bottomX]];
-    L.imageOverlay(imageOverlay, bounds).addTo(map);
+    const bounds = [[mapConfig.topX, mapConfig.topY], [mapConfig.bottomX, mapConfig.bottomX]];
+    L.imageOverlay(mapConfig.imageOverlay, bounds).addTo(map);
     map.fitBounds(bounds);
 }
 
