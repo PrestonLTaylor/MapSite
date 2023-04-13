@@ -19,12 +19,13 @@ internal sealed class EntityTrackerEndpointTest : IntegrationTest
     public async Task Post_WhenSuppliedNewEntity_AddsEntityToEntityTracker()
     {
         // Arrange
+        const string apiPath = APIRoutes.EntityTracker.Root + APIRoutes.EntityTracker.Update;
         const int uniqueEntityId = 0;
         var uniqueMapEntity = new MapEntity(new EntityPosition(0, 0), "TestEntity");
         var entityUpdateRequest = new EntityUpdateRequest(uniqueEntityId, uniqueMapEntity);
 
         // Act
-        var response = await _testClient.PostAsJsonAsync(APIRoutes.EntityTracker.Update, entityUpdateRequest);
+        var response = await _testClient.PostAsJsonAsync(apiPath, entityUpdateRequest);
         var entityTracker = _factory.Services.GetRequiredService<MapEntityTracker>();
         var trackedEntities = entityTracker.GetTrackedEntities();
 
@@ -42,6 +43,7 @@ internal sealed class EntityTrackerEndpointTest : IntegrationTest
     public async Task Post_WhenSuppliedExistingEntity_UpdatesThatEntityInEntityTracker()
     {
         // Arrange
+        const string apiPath = APIRoutes.EntityTracker.Root + APIRoutes.EntityTracker.Update;
         const int uniqueEntityId = 0;
         var originalMapEntity = new MapEntity(new EntityPosition(0, 0), "TestEntity");
         var newMapEntity = new MapEntity(new EntityPosition(1, 1), "TestEntity");
@@ -49,8 +51,8 @@ internal sealed class EntityTrackerEndpointTest : IntegrationTest
         var newEntityUpdateRequest = new EntityUpdateRequest(uniqueEntityId, newMapEntity);
 
         // Act
-        await _testClient.PostAsJsonAsync(APIRoutes.EntityTracker.Update, originalEntityUpdateRequest);
-        var response = await _testClient.PostAsJsonAsync(APIRoutes.EntityTracker.Update, newEntityUpdateRequest);
+        await _testClient.PostAsJsonAsync(apiPath, originalEntityUpdateRequest);
+        var response = await _testClient.PostAsJsonAsync(apiPath, newEntityUpdateRequest);
         var entityTracker = _factory.Services.GetRequiredService<MapEntityTracker>();
         var trackedEntities = entityTracker.GetTrackedEntities();
 
@@ -68,12 +70,13 @@ internal sealed class EntityTrackerEndpointTest : IntegrationTest
     public async Task Delete_WhenSuppliedExistingEntity_RemovesEntityFromEntityTracker()
     {
         // Arrange
+        const string updatePath = APIRoutes.EntityTracker.Root + APIRoutes.EntityTracker.Update;
         const int uniqueEntityId = 0;
         var uniqueMapEntity = new MapEntity(new EntityPosition(0, 0), "TestEntity");
         var entityUpdateRequest = new EntityUpdateRequest(uniqueEntityId, uniqueMapEntity);
 
         // Act
-        await _testClient.PostAsJsonAsync(APIRoutes.EntityTracker.Update, entityUpdateRequest);
+        await _testClient.PostAsJsonAsync(updatePath, entityUpdateRequest);
         var response = await _testClient.DeleteAsync($"{APIRoutes.EntityTracker.Root}/{uniqueEntityId}");
         var entityTracker = _factory.Services.GetRequiredService<MapEntityTracker>();
         var trackedEntities = entityTracker.GetTrackedEntities();
@@ -90,13 +93,14 @@ internal sealed class EntityTrackerEndpointTest : IntegrationTest
     public async Task Delete_WhenSuppliedInvalidEntity_DoesNothing()
     {
         // Arrange
+        const string updatePath = APIRoutes.EntityTracker.Root + APIRoutes.EntityTracker.Update;
         const int uniqueEntityId = 0;
         const int invalidEntityId = 1;
         var uniqueMapEntity = new MapEntity(new EntityPosition(0, 0), "TestEntity");
         var entityUpdateRequest = new EntityUpdateRequest(uniqueEntityId, uniqueMapEntity);
 
         // Act
-        await _testClient.PostAsJsonAsync(APIRoutes.EntityTracker.Update, entityUpdateRequest);
+        await _testClient.PostAsJsonAsync(updatePath, entityUpdateRequest);
         var response = await _testClient.DeleteAsync($"{APIRoutes.EntityTracker.Root}/{invalidEntityId}");
         var entityTracker = _factory.Services.GetRequiredService<MapEntityTracker>();
         var trackedEntities = entityTracker.GetTrackedEntities();

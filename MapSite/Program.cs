@@ -1,4 +1,5 @@
 using Serilog;
+using Asp.Versioning;
 using MapSite.Endpoints;
 using MapSite.Middleware;
 
@@ -9,6 +10,12 @@ builder.Services.AddServerSideBlazor();
 
 builder.Services.AddAPIKeyAuthenticationServices();
 builder.Services.AddEntityTrackingServices();
+
+builder.Services.AddApiVersioning((options) =>
+{
+    options.DefaultApiVersion = new ApiVersion(APIRoutes.LatestMajorVersion, APIRoutes.LatestMinorVersion);
+    options.AssumeDefaultVersionWhenUnspecified = true;
+});
 
 builder.Host.UseSerilog((context, config) =>
 {

@@ -13,12 +13,15 @@ public static class EntityTrackingEndpointsExtensions
 
     static public WebApplication MapEntityTrackingEndpoints(this WebApplication app)
     {
-        app.MapPost(APIRoutes.EntityTracker.Update, (MapEntityTracker tracker, [FromBody]EntityUpdateRequest updateRequest) => {
+        var versioning = app.NewVersionedApi("Entity Tracking");
+        var entityTracking = versioning.MapGroup(APIRoutes.EntityTracker.Root).HasApiVersion(APIRoutes.LatestMajorVersion, APIRoutes.LatestMinorVersion);
+
+        entityTracking.MapPost(APIRoutes.EntityTracker.Update, (MapEntityTracker tracker, [FromBody]EntityUpdateRequest updateRequest) => {
             tracker.UpdateTrackedMapEntity(updateRequest);
             return Results.Accepted();
         });
 
-        app.MapDelete(APIRoutes.EntityTracker.Delete, (MapEntityTracker tracker, int entityId) => {
+        entityTracking.MapDelete(APIRoutes.EntityTracker.Delete, (MapEntityTracker tracker, int entityId) => {
             tracker.DeleteMapEntity(entityId);
             return Results.NoContent();
         });
