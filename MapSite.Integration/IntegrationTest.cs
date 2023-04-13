@@ -1,16 +1,15 @@
-﻿using MapSite.Endpoints;
-using Microsoft.AspNetCore.Mvc.Testing;
-using System.Net;
+﻿using Microsoft.AspNetCore.Mvc.Testing;
 
 namespace MapSite.Integration;
 
 internal class IntegrationTest
 {
-    protected IntegrationTest()
+    [OneTimeSetUp]
+    protected void Initialization()
     {
-        var factory = new WebApplicationFactory<Program>();
-        _testClient = factory.CreateClient();
+        _testClient = _factory.CreateClient();
     }
 
-    protected readonly HttpClient _testClient;
+    protected readonly WebApplicationFactory<Program> _factory = new();
+    protected HttpClient _testClient;
 }
