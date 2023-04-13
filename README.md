@@ -10,7 +10,32 @@ dotnet run --project ./MapSite/MapSite.csproj
 
 # Documentation
 
-TODO: API Documentation
+To get all tracked entities:
+```
+GET /api/entitytracker
+```
+
+To add a tracked entity:
+```
+POST /api/entitytracker
+
+Body:
+{
+    "EntityId": 0,
+    "UpdatedMapEntity": {
+        "Position": {
+            "x": 1000,
+            "y": 2000
+        },
+        "EntityType": "Marker"
+    }
+}
+```
+
+To delete a tracked entity:
+```
+DELETE /api/entitytracker/{entityId}
+```
 
 # Testing
 
