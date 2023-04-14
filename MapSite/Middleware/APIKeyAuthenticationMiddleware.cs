@@ -14,12 +14,6 @@ public sealed class APIKeyAuthenticationMiddleware
 
     public async Task InvokeAsync(HttpContext context)
     {
-        if (!context.Request.Path.StartsWithSegments(APIRoutes.Root))
-        {
-            await _next.Invoke(context);
-            return;
-        }
-
         if (!_authenticator.IsRequestAuthenticated(context.Request))
         {
             context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
@@ -44,7 +38,8 @@ public static class APIKeyAuthenticationMiddlewareExtensions
 
     static public IApplicationBuilder UseAPIKeyAuthentication(this IApplicationBuilder app)
     {
-        app.UseMiddleware<APIKeyAuthenticationMiddleware>();
+        app.UseWhen(context => context.Request.Path.StartsWithSegments(APIRoutes.Root),
+            app => app.UseMiddleware<APIKeyAuthenticationMiddleware>());
         return app;
     }
 }
