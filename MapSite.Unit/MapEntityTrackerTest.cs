@@ -102,6 +102,29 @@ internal sealed class MapEntityTrackerTest
         });
     }
 
+    [Test]
+    public void GetTrackedEntities_ReturnsAllStoredEntities()
+    {
+        // Arrange
+        const int uniqueEntityId = 0;
+        var trackedMapEntity = new MapEntity(new EntityPosition(0, 0), "TestEntity");
+        var entityTracker = CreateMapEntityTrackerWithDefaultMapEntities(new Dictionary<int, MapEntity>
+        {
+            { uniqueEntityId, trackedMapEntity }
+        });
+
+        // Act
+        var trackedEntities = entityTracker.GetTrackedEntities();
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(trackedEntities.Count(), Is.EqualTo(1));
+            Assert.That(trackedEntities.First().Key, Is.EqualTo(uniqueEntityId));
+            Assert.That(trackedEntities.First().Value, Is.EqualTo(trackedMapEntity));
+        });
+    }
+
     private MapEntityTracker CreateMapEntityTrackerWithDefaultMapEntities(Dictionary<int, MapEntity> mapEntities)
     {
         return new MapEntityTracker(new NullLogger<MapEntityTracker>(), mapEntities);

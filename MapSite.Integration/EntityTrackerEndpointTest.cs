@@ -113,6 +113,30 @@ internal sealed class EntityTrackerEndpointTest : IntegrationTest
         });
     }
 
+    [Test]
+    public async Task Get_ReturnsAllTrackedEntities()
+    {
+        // Arrange
+        const string getPath = APIRoutes.EntityTracker.Root + APIRoutes.EntityTracker.Get;
+        const string updatePath = APIRoutes.EntityTracker.Root + APIRoutes.EntityTracker.Update;
+        const int uniqueEntityId = 0;
+        var mapEntity = new MapEntity(new EntityPosition(0, 0), "TestEntity");
+        var entityUpdateRequest = new EntityUpdateRequest(uniqueEntityId, mapEntity);
+
+        // Act
+        await _testClient.PostAsJsonAsync(updatePath, entityUpdateRequest);
+        var response = await _testClient.GetAsync(getPath);
+        var content = await response.Content.ReadFromJsonAsync<Dictionary<int, MapEntity>>();
+        var firstEntity = content?.First();
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(firstEntity?.Value, Is.EqualTo(mapEntity));
+        });
+    }
+
     private void AddValidAPIKeyToTestClient()
     {
         var configuration = _factory.Services.GetRequiredService<IConfiguration>();
